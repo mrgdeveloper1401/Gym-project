@@ -1,0 +1,22 @@
+<!--this is the base html page which all other pages inherit from it-->
+{%load static%}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{%block title%}{%end block%}</title>
+    <link rel="stylesheet",type ="text/css" href="{%static'css/base.css'%}">
+    {%block head%}{%end block%}
+</head>
+<body>
+    <!-- هدر و فوتر و نویگیشن بیس را وارد میکنیم-->
+{%include 'partials/header.html'%}
+{%include 'partials/navigation.html'%}
+{%block content%}{%end block%}
+{%include 'partials/footer.html'%}
+
+</body>
+</html>
