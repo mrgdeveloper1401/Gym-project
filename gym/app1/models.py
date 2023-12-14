@@ -1,56 +1,58 @@
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from PIL import Image
+from django.utils import timezone
 # Create your models here.
-
 
 # گزینه های انتخاب جنسیت
 class Gender(models.TextChoices):
     FEMALE = 'FM','Female'
     MALE = 'ML','Male'
 
-
-#ساخت یوزر سفارشی برای مدیر باشگاه 
-class Manager_CustomUser():
-   pass
+#ساخت یوزرهای سفارشی  
+class custom_user(AbstractUser):
+    email = models.EmailField(unique=True)
+    is_gymManager = models.BooleanField(default=False)
+    is_coach = models.BooleanField(default=False)
+    is_crew = models.BooleanField(default=False)
+    is_bodybuilder = models.BooleanField(default=False)
     
 '''class Crew_CustomUser():
     pass
 class Coach_CustomUser():
-    pass
-class Bodybuilder_CustomUser():
-    pass
+    pass'''
 
 #مدل های مجموعه موجودیت ها
-#مدل باشگاه🔵
-class Gyms (models.Model):
-    #اسم =کلید اصلی
-    name = models.CharField(primary_key=True,max_length=20)
+#مدل باشگاه(مدیرباشگاه)🔵
+class Gym(models.Model):
+    gymManager =models.OneToOneField(custom_user,on_delete=models.PROTECT, primary_key=True)
+    
+    gym_name = models.CharField(unique=True,max_length=20)
    # workingtime=
-    manager_name = models.CharField(unique=True,max_length=20)
     manager_cv = models.TextField()
-    manager_password = models.CharField(max_length=15)
+    #manager_password = models.CharField(max_length=15)
     facilities = models.TextField()
     capacity = models.PositiveSmallIntegerField()
     numberofmachines = models.IntegerField()
    # numberofworkers=
     foundationdate = models.DateField()
-    email = models.EmailField()
    # address=
     #tuition =
     #phonenumber
 
-    def __str__(self) -> str:
-        return self.name
+    def __str__(self):
+        return self.gym_name
 
 #مدل ورزشکاران🔵
-class bodybuilders (models.Model):
+class bodybuilder (models.Model):
+    bodybuilder = models.OneToOneField(custom_user,on_delete=models.PROTECT,primary_key=True)
+    
     firstname = models.CharField(max_length=10)
     lastname = models.CharField(max_length=10)
     gender = models.CharField (max_length= 2, choices=Gender.choices , default=Gender.FEMALE)
     height = models.PositiveSmallIntegerField()
     weight = models.PositiveSmallIntegerField()
-    nationalcode = models.PositiveSmallIntegerField(primary_key=True)
+    nationalcode = models.PositiveSmallIntegerField(unique=True)
     email = models.EmailField()
     password = models.CharField(max_length=15)
     phonenumber = models.PositiveSmallIntegerField()
@@ -58,10 +60,11 @@ class bodybuilders (models.Model):
     illness = models.TextField()
     birthdate = models.DateField()
    # age = 
+    damage = models.ManyToManyField(damage,related_name="who is damaged such")
 
     def __str__(self) -> str:
         return self.firstname
-'''
+
     
 #مدل ورکتایمز✅
 class work_time(models.Model):
