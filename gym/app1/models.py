@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 from PIL import Image
 # Create your models here.
@@ -9,20 +9,15 @@ class Gender(models.TextChoices):
     FEMALE = 'FM','Female'
     MALE = 'ML','Male'
 
-#گزینه های انتخاب زمان آسیب دیدن ورزشکارmanager_customuser
+#گزینه های انتخاب زمان آسیب دیدن 
 class damagedwhen (models.TextChoices):
     RECENT_MONTHS = 'RM',' ماه های اخیر'
     EARLIER = 'E', 'قبلتر'
 
-
-class Manager_CustomUser(AbstractUser):
-    username =models.CharField(max_length=20,primary_key=True,unique=True)
-    email = models.EmailField()
-    phonenumber = models.PositiveSmallIntegerField(default=0)
-
-
-    def __str__(self) -> str:
-        return self.username
+#ساخت یوزر سفارشی برای مدیر باشگاه 
+class Manager_CustomUser():
+   pass
+    
 '''class Crew_CustomUser():
     pass
 class Coach_CustomUser():
@@ -47,6 +42,7 @@ class Gyms (models.Model):
     email = models.EmailField()
    # address=
     #tuition =
+    #phonenumber
 
     def __str__(self) -> str:
         return self.name
