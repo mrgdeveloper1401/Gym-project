@@ -9,10 +9,6 @@ class Gender(models.TextChoices):
     FEMALE = 'FM','Female'
     MALE = 'ML','Male'
 
-#گزینه های انتخاب زمان آسیب دیدن 
-class damagedwhen (models.TextChoices):
-    RECENT_MONTHS = 'RM',' ماه های اخیر'
-    EARLIER = 'E', 'قبلتر'
 
 #ساخت یوزر سفارشی برای مدیر باشگاه 
 class Manager_CustomUser():
@@ -24,7 +20,7 @@ class Coach_CustomUser():
     pass
 class Bodybuilder_CustomUser():
     pass
-'''
+
 #مدل های مجموعه موجودیت ها
 #مدل باشگاه🔵
 class Gyms (models.Model):
@@ -65,10 +61,10 @@ class bodybuilders (models.Model):
 
     def __str__(self) -> str:
         return self.firstname
-
+'''
     
-#مدل ورکتایمز🔴
-class work_times (models.Model):
+#مدل ورکتایمز✅
+class work_time(models.Model):
     #گزینه های انتخاب کارکن: خدمه یا مربی؟
     class who_works (models.TextChoices):
         COACH = 'CO','coach'
@@ -82,16 +78,15 @@ class work_times (models.Model):
         CHARSHANBE = '4SH','4shanbe'
         PANJSHANBE = '5SH','5shanbe'
         JOMEE = 'JOM','Jomee'
-
     #id خودکار
     day = models.CharField(choices=weekdays.choices,max_length=10)
     start = models.TimeField()
     end = models.TimeField()
     coach_crew = models.CharField(max_length=2 , choices=who_works.choices)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return str([self.day,self.start,self.end])
-    
+'''                                                                                                                      
 #مدل کارکنان🔵
 class workers (models.Model):
     nationalcode = models.PositiveSmallIntegerField(primary_key=True)
@@ -118,9 +113,13 @@ class movements(models.Model):
 
     def __str__(self) -> str:
         return self.name
-    
+    '''
 #مدل آسیب ها✅
-class damages(models.Model):
+class damage(models.Model):
+#گزینه های انتخاب زمان آسیب دیدن 
+    class damagedwhen (models.TextChoices):
+        RECENT_MONTHS = 'RM',' ماه های اخیر'
+        EARLIER = 'E', 'قبلتر'
     body_part= models.CharField(max_length=10)
     what =  models.CharField(max_length=100)
     when = models.CharField(max_length= 2 ,choices=damagedwhen.choices ,default=damagedwhen.EARLIER)
@@ -128,7 +127,7 @@ class damages(models.Model):
     def __str__(self) -> str:
         return self.what
 
-
+'''
 #مدل های مجموعه ارتباط هایی که به شکل مجموعه موجودیت در آمده اند
 #مدل قرارداد🔴
 class Agreement(models.Model):
@@ -163,3 +162,4 @@ class Membership(models.Model):
 #رزرو🔵
 class Reserve():
     pass
+'''
