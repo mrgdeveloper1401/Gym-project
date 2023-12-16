@@ -3,6 +3,24 @@ from django.db import models
 from PIL import Image
 from django.utils import timezone
 # Create your models here.
+#گزینه های انتخاب کارکن: خدمه یا مربی؟
+class who_works (models.TextChoices):
+    COACH = 'CO','coach'
+    CREW = 'CR','crew'
+#گزینه های انتخاب روز هفته
+class weekdays(models.TextChoices):
+    SHANBE = 'SHA','Sanbe'
+    YEKSHANBE = '1SH','1shanbe'
+    DOSHANBE = '2SH','2shanbe'
+    SESHANBE = '3SH','3shanbe'
+    CHARSHANBE = '4SH','4shanbe'
+    PANJSHANBE = '5SH','5shanbe'
+    JOMEE = 'JOM','Jomee'
+
+#گزینه های انتخاب زمان آسیب دیدن 
+class damagedwhen (models.TextChoices):
+    RECENT_MONTHS = 'RM',' ماه های اخیر'
+    EARLIER = 'E', 'قبلتر'
 
 # گزینه های انتخاب جنسیت
 class Gender(models.TextChoices):
@@ -47,20 +65,19 @@ class Gym(models.Model):
 class bodybuilder (models.Model):
     bodybuilder = models.OneToOneField(custom_user,on_delete=models.PROTECT,primary_key=True)
     
-    firstname = models.CharField(max_length=10)
-    lastname = models.CharField(max_length=10)
+    firstname = models.CharField(max_length=15)
+    lastname = models.CharField(max_length=15)
     gender = models.CharField (max_length= 2, choices=Gender.choices , default=Gender.FEMALE)
     height = models.PositiveSmallIntegerField()
     weight = models.PositiveSmallIntegerField()
     nationalcode = models.PositiveSmallIntegerField(unique=True)
     email = models.EmailField()
-    password = models.CharField(max_length=15)
     phonenumber = models.PositiveSmallIntegerField()
     aim = models.TextField()
     illness = models.TextField()
     birthdate = models.DateField()
    # age = 
-    damage = models.ManyToManyField(damage,related_name="who is damaged such")
+    #damage = models.ManyToManyField(damage,related_name="who is damaged such",null=True)
 
     def __str__(self) -> str:
         return self.firstname
@@ -68,19 +85,7 @@ class bodybuilder (models.Model):
     
 #مدل ورکتایمز✅
 class work_time(models.Model):
-    #گزینه های انتخاب کارکن: خدمه یا مربی؟
-    class who_works (models.TextChoices):
-        COACH = 'CO','coach'
-        CREW = 'CR','crew'
-    #گزینه های انتخاب روز هفته
-    class weekdays(models.TextChoices):
-        SHANBE = 'SHA','Sanbe'
-        YEKSHANBE = '1SH','1shanbe'
-        DOSHANBE = '2SH','2shanbe'
-        SESHANBE = '3SH','3shanbe'
-        CHARSHANBE = '4SH','4shanbe'
-        PANJSHANBE = '5SH','5shanbe'
-        JOMEE = 'JOM','Jomee'
+
     #id خودکار
     day = models.CharField(choices=weekdays.choices,max_length=10)
     start = models.TimeField()
@@ -88,7 +93,7 @@ class work_time(models.Model):
     coach_crew = models.CharField(max_length=2 , choices=who_works.choices)
 
     def __str__(self):
-        return str([self.day,self.start,self.end])
+        return str(self.day,self.start,self.end)
 '''                                                                                                                      
 #مدل کارکنان🔵
 class workers (models.Model):
@@ -119,13 +124,10 @@ class movements(models.Model):
     '''
 #مدل آسیب ها✅
 class damage(models.Model):
-#گزینه های انتخاب زمان آسیب دیدن 
-    class damagedwhen (models.TextChoices):
-        RECENT_MONTHS = 'RM',' ماه های اخیر'
-        EARLIER = 'E', 'قبلتر'
-    body_part= models.CharField(max_length=10)
+
+    body_part= models.CharField(max_length=20)
     what =  models.CharField(max_length=100)
-    when = models.CharField(max_length= 2 ,choices=damagedwhen.choices ,default=damagedwhen.EARLIER)
+    when = models.CharField(max_length=10 ,choices=damagedwhen.choices ,default=damagedwhen.EARLIER)
 
     def __str__(self) -> str:
         return self.what
