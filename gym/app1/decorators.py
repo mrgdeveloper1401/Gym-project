@@ -7,12 +7,12 @@ from django.contrib.auth.decorators import user_passes_test
 def gymmanager_required(function=None, redirect_field_name = REDIRECT_FIELD_NAME, login_url='login'):
     
     actual_decorator = user_passes_test(
-        lambda u:u.is_active and u.is_student,
-        login_url=login_url,
-        redirect_field_name=redirect_field_name)
+        lambda u:u.is_active and u.is_gymManager,  # بررسی اینکه آیا یوزر فعال است و آیا مدیرباشگاه است یا نه
+        login_url=login_url,                    #اگر نبود،به صفحه لاگین برمیگرداند
+        redirect_field_name=redirect_field_name)# اگر بود،به صفحه ی دیگری میبرد
     
-    if function:
-        return actual_decorator(function)
+   # if function:
+    #    return actual_decorator(function)
     return actual_decorator
 
 
@@ -21,10 +21,10 @@ def gymmanager_required(function=None, redirect_field_name = REDIRECT_FIELD_NAME
 def bodybuilder_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME,login_url='login'):
 
     actual_decorator = user_passes_test(
-        lambda u:u.is_active and u.is_bodybuilder,
+        lambda u:u.is_active and u.is_bodybuilder,  
         login_url=login_url,
         redirect_field_name=redirect_field_name
     )
-    if function:
-        return actual_decorator(function)
+    #if function:
+     #   return actual_decorator(function)
     return actual_decorator

@@ -77,7 +77,7 @@ class bodybuilder (models.Model):
     illness = models.TextField()
     birthdate = models.DateField()
    # age = 
-    #damage = models.ManyToManyField(damage,related_name="who is damaged such",null=True)
+    damage = models.ManyToManyField(damage,related_name="who is damaged such",null=True)
 
     def __str__(self) -> str:
         return self.firstname
@@ -155,9 +155,9 @@ class Membership(models.Model):
 #عضویت در کدام باشگاه؟🔴
 #کدام ورزشکاران عضو باشگاه اند؟🔴
 #ورزشکار-برنامه 🔴
-#برنامه نویسی(مربی -برنامه)🔵
+#برنامه نویسی(مربی -برنامه)🔴
 #حرکات-برنامه(لیست)🔴
-#آسیب - ورزشکار🔴
+#آسیب - ورزشکار🔵
 #قرارداد-باشگاه🔵
 #قرارداد_ورک تایم🔵
 #قرارداد -کارکنان🔵

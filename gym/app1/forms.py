@@ -18,7 +18,6 @@ class gymmanager_signupform(UserCreationForm):
     gym_name = forms.CharField(widget=forms.TextInput(),max_length=20)
    # workingtime=
     manager_cv = forms.CharField(widget=forms.Textarea())
-    #manager_password = models.CharField(max_length=15)
     facilities = forms.CharField(widget=forms.Textarea())
     capacity = forms.IntegerField(widget=forms.NumberInput())
     numberofmachines = forms.IntegerField(widget=forms.NumberInput())
@@ -33,10 +32,10 @@ class gymmanager_signupform(UserCreationForm):
 
     @transaction.Atomic
     def save(self, commit=True):
-        user = super().save(commit=False)
+        #user = super().save(commit=False)
         user.is_gymManager = True
-        if commit:
-            user.save()
+       # if commit:
+          #  user.save()
         gymmanager = Gym.objects.create(
             user=user,
             gymmanager_fullname=self.cleaned_data.get('gymmanager_fullname'),
@@ -54,7 +53,7 @@ class gymmanager_signupform(UserCreationForm):
             #phonenumber
         )
         return user
-# ساخت فیلد سفارشی برای انتخاب آسیب ها در فرم ثبت نام ورزشکار
+# ساخت فیلد (ولیبل) سفارشی برای انتخاب آسیب ها در فرم ثبت نام ورزشکار
 class custom_modelmultiplechoicefield(forms.ModelMultipleChoiceField):
     def label_from_instance(self, damage) -> str:
         return "%s" %damage.what
@@ -76,10 +75,10 @@ class bodybuilder_signupform(UserCreationForm):
     #illness = forms.CharField(widget=forms.te)
     birthdate = forms.DateField(widget=forms.SelectDateWidget())
    # age = 
-    '''damage = custom_modelmultiplechoicefield(
+    damage = custom_modelmultiplechoicefield(
         queryset=damage.objects.all(),
         widget = forms.CheckboxSelectMultiple
-        )'''
+        )
 
     class Meta(UserCreationForm.Meta):
         model = custom_user
@@ -87,10 +86,10 @@ class bodybuilder_signupform(UserCreationForm):
 
     @transaction.Atomic
     def save(self, commit=True):
-        user = super().save(commit=False)
+        #user = super().save(commit=False)
         user.is_bodybuilder = True
-        if commit:
-            user.save()
+        #if commit:
+            #user.save()
         bodybuilder = bodybuilder.objects.create(
             user=user,
             firstname=self.cleaned_data.get('firstname'),
@@ -124,6 +123,9 @@ class damageform(forms.ModelForm):
         model = damage
         fields = ('body_part','what')
 
+    def save(self, commit=True):
+        return super().save(commit)
+
 #فرم برای افزودن ورک تایم به ورکتایم های ثبت شده
 class work_timeform(forms.ModelForm):
     day = forms.ChoiceField(widget=forms.Select(choices=weekdays.choices))
@@ -134,3 +136,6 @@ class work_timeform(forms.ModelForm):
     class Meta:
         model = work_time
         fields = ('day','coach_crew','start')
+    
+    def save(self, commit=True) -> Any:
+        return super().save(commit)
