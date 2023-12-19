@@ -23,8 +23,6 @@ class gymmanager_signupform(UserCreationForm):
     numberofmachines = forms.IntegerField(widget=forms.NumberInput())
    # numberofworkers=
     foundationdate = forms.DateField(widget=forms.DateInput())
-   # address=
-    #tuition =
     #phonenumber
     class Meta(UserCreationForm.Meta):
         model = custom_user

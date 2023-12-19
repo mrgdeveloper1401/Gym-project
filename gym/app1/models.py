@@ -39,6 +39,16 @@ class custom_user(AbstractUser):
     pass
 class Coach_CustomUser():
     pass'''
+#مدل آسیب ها✅
+class damage(models.Model):
+
+    body_part= models.CharField(max_length=20)
+    what =  models.CharField(max_length=100)
+    when = models.CharField(max_length=10 ,choices=damagedwhen.choices ,default=damagedwhen.EARLIER)
+
+    def __str__(self) -> str:
+        return self.what
+    
 
 #مدل های مجموعه موجودیت ها
 #مدل باشگاه(مدیرباشگاه)🔵
@@ -54,7 +64,7 @@ class Gym(models.Model):
     numberofmachines = models.IntegerField()
    # numberofworkers=
     foundationdate = models.DateField()
-   # address=
+   # address=null = true
     #tuition =
     #phonenumber
 
@@ -77,7 +87,7 @@ class bodybuilder (models.Model):
     illness = models.TextField()
     birthdate = models.DateField()
    # age = 
-    damage = models.ManyToManyField(damage,related_name="who is damaged such",null=True)
+    Damage = models.ManyToManyField(damage,related_name="who_damaged",null=True)
 
     def __str__(self) -> str:
         return self.firstname
@@ -122,15 +132,7 @@ class movements(models.Model):
     def __str__(self) -> str:
         return self.name
     '''
-#مدل آسیب ها✅
-class damage(models.Model):
 
-    body_part= models.CharField(max_length=20)
-    what =  models.CharField(max_length=100)
-    when = models.CharField(max_length=10 ,choices=damagedwhen.choices ,default=damagedwhen.EARLIER)
-
-    def __str__(self) -> str:
-        return self.what
 
 '''
 #مدل های مجموعه ارتباط هایی که به شکل مجموعه موجودیت در آمده اند
