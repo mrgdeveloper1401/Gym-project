@@ -34,6 +34,7 @@ class custom_user(AbstractUser):
     is_coach = models.BooleanField(default=False)
     is_crew = models.BooleanField(default=False)
     is_bodybuilder = models.BooleanField(default=False)
+    user_name = models.CharField(max_length=10,null=True)
     
 '''class Crew_CustomUser():
     pass
@@ -58,7 +59,6 @@ class Gym(models.Model):
     gym_name = models.CharField(unique=True,max_length=20)
    # workingtime=
     manager_cv = models.TextField()
-    #manager_password = models.CharField(max_length=15)
     facilities = models.TextField()
     capacity = models.PositiveSmallIntegerField()
     numberofmachines = models.IntegerField()
