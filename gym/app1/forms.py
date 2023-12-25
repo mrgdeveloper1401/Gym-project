@@ -28,7 +28,7 @@ class gymmanager_signupform(UserCreationForm):
         model = custom_user
         fields = ('user_name','email','password1','password2')
 
-    @transaction.Atomic
+''' @transaction.Atomic
     def save(self,savepoint =True,durable=False, commit=True):
         user = super().save(commit=False)
         user.is_gymManager = True
@@ -50,7 +50,7 @@ class gymmanager_signupform(UserCreationForm):
             #tuition =
             #phonenumber
         )
-        return user
+        return user'''
 # ساخت فیلد (ولیبل) سفارشی برای انتخاب آسیب ها در فرم ثبت نام ورزشکار
 class custom_modelmultiplechoicefield(forms.ModelMultipleChoiceField):
     def label_from_instance(self, damage) -> str:
@@ -79,7 +79,7 @@ class bodybuilder_signupform(UserCreationForm):
         model = custom_user
         fields = ('user_name','email','password1','password2')
 
-    @transaction.Atomic
+    '''@transaction.Atomic
     def save(self, commit=True):
         user = super().save(commit=False)
         user.is_bodybuilder = True
@@ -101,7 +101,7 @@ class bodybuilder_signupform(UserCreationForm):
             #damage
         )
         return user
-    
+    '''
 
 #فرم برای لاگین مدیر/باشگاه و ورزشکار
 class loginform(AuthenticationForm):
