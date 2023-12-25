@@ -72,8 +72,8 @@ def gymmanager_home(request):
     return render(request,'app1templates/gymmanager_home.html',context)
 
 #ویویی که اطلاعات هر ورزشکار را نشان میدهد
-@login_required
-@bodybuilder_required
+# @login_required
+# @bodybuilder_required
 def bodybuilder_home(request):
     damages = damage.objects.all()
     context = {'damages':damages}
