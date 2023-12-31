@@ -28,13 +28,13 @@ class gymmanager_signupform(UserCreationForm):
         model = custom_user
         fields = ('user_name','email','password1','password2')
 
-    @transaction.Atomic
-    def save(self, commit=True):
-        #user = super().save(commit=False)
+''' @transaction.Atomic
+    def save(self,savepoint =True,durable=False, commit=True):
+        user = super().save(commit=False)
         user.is_gymManager = True
-       # if commit:
-          #  user.save()
-        gymmanager = Gym.objects.create(
+        if commit:
+            user.save()
+        user = Gym.objects.create(
             user=user,
             gymmanager_fullname=self.cleaned_data.get('gymmanager_fullname'),
             gym_name=self.cleaned_data.get('gym_name'),
@@ -50,11 +50,11 @@ class gymmanager_signupform(UserCreationForm):
             #tuition =
             #phonenumber
         )
-        return user
+        return user'''
 # ساخت فیلد (ولیبل) سفارشی برای انتخاب آسیب ها در فرم ثبت نام ورزشکار
 class custom_modelmultiplechoicefield(forms.ModelMultipleChoiceField):
     def label_from_instance(self, damage) -> str:
-        return "%s" %damage.what
+        return "%s,%s" %(damage.what,damage.body_part)
     
 #فرم برای ثبت نام ورزشکار
 class bodybuilder_signupform(UserCreationForm):
@@ -73,21 +73,18 @@ class bodybuilder_signupform(UserCreationForm):
     #illness = forms.CharField(widget=forms.te)
     birthdate = forms.DateField(widget=forms.SelectDateWidget())
    # age = 
-    damage = custom_modelmultiplechoicefield(
-        queryset=damage.objects.all(),
-        widget = forms.CheckboxSelectMultiple
-        )
+    
 
     class Meta(UserCreationForm.Meta):
         model = custom_user
         fields = ('user_name','email','password1','password2')
 
-    @transaction.Atomic
+    '''@transaction.Atomic
     def save(self, commit=True):
-        #user = super().save(commit=False)
+        user = super().save(commit=False)
         user.is_bodybuilder = True
-        #if commit:
-            #user.save()
+        if commit:
+            user.save()
         bodybuilder = bodybuilder.objects.create(
             user=user,
             firstname=self.cleaned_data.get('firstname'),
@@ -104,7 +101,7 @@ class bodybuilder_signupform(UserCreationForm):
             #damage
         )
         return user
-    
+    '''
 
 #فرم برای لاگین مدیر/باشگاه و ورزشکار
 class loginform(AuthenticationForm):
@@ -137,3 +134,7 @@ class work_timeform(forms.ModelForm):
     
     def save(self, commit=True) -> Any:
         return super().save(commit)
+    
+#فرم برای افزودن حرکت بدنسازی
+class movementform(forms.ModelForm):
+    pass

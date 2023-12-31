@@ -26,7 +26,7 @@ class gymmanager_signupview(CreateView):
         return super().get_context_data(**kwargs)
     
     def form_valid(self, form):
-        user = form.save()
+        user = form.save
         login(self.request,user)
         return redirect('gymmanager-home')
 
@@ -34,21 +34,21 @@ class gymmanager_signupview(CreateView):
 class bodybuilder_signupview(CreateView):
     model = bodybuilder
     form_class = bodybuilder_signupform
-    template_name = 'app1/templates/app1templates/bodybuilder_signup.html'
+    template_name = 'app1templates/bodybuilder_signup.html'
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         kwargs['user_type']= 'bodybuilder'
         return super().get_context_data(**kwargs)
     
     def form_valid(self, form):
-        user = form.save()
+        user = form.save
         login(self.request,user)
         return redirect('bodybuilder-home')
 
 #ویوی لاگین کاربران
 class loginview(auth_views.LoginView):
     form_class = loginform
-    template_name = 'app1/templates/app1templates/login.html'
+    template_name = 'app1templates/login.html'
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         return super().get_context_data(**kwargs)
@@ -62,3 +62,48 @@ class loginview(auth_views.LoginView):
                 return reverse('bodybuilder-home')
         else:
             return reverse('login')
+        
+#ویویی که اطلاعات هر باشگاه/مدیرباشگاه را نشان میدهد
+@login_required
+@gymmanager_required
+def gymmanager_home(request):
+    worktimes = work_time.objects.all()
+    context = {'worktimes':worktimes}
+    return render(request,'app1templates/gymmanager_home.html',context)
+
+#ویویی که اطلاعات هر ورزشکار را نشان میدهد
+# @login_required
+# @bodybuilder_required
+def bodybuilder_home(request):
+    damages = damage.objects.all()
+    context = {'damages':damages}
+    return render(request,'app1templates/bodybuilder_home.html',context)
+
+#ویو برای ساختن یک آسیب جدید
+@login_required
+@bodybuilder_required
+def create_damage(request):
+    if request.method == 'POST':
+        form = damageform(request.POST)
+        if form.is_valid():
+            damage = form.save(commit=False)
+            damage.who_damaged = request.user.bodybuilder
+            damage.save()
+            return redirect('bodybuilder-home')
+        else:
+            form = damageform()
+        return render(request,'app1templates/damage_form.html',{'form':form})
+    
+#ویو برای ساختن یک ورک تایم جدید
+@login_required
+@gymmanager_required
+def create_worktime(request):
+    if request.method == 'POST':
+        form = work_timeform(request.POST)
+        if form.is_valid():
+            work_time = form.save(commit=False)
+            work_time.save()
+            return redirect('gymmanager_home')
+        else:
+            form = work_timeform
+        return render(request,'app1templates/worktime_form.html',{'form':form})

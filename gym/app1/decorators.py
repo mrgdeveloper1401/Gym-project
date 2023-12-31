@@ -11,8 +11,8 @@ def gymmanager_required(function=None, redirect_field_name = REDIRECT_FIELD_NAME
         login_url=login_url,                    #اگر نبود،به صفحه لاگین برمیگرداند
         redirect_field_name=redirect_field_name)# اگر بود،به صفحه ی دیگری میبرد
     
-   # if function:
-    #    return actual_decorator(function)
+    if function:
+        return actual_decorator(function)
     return actual_decorator
 
 
@@ -25,6 +25,6 @@ def bodybuilder_required(function=None, redirect_field_name=REDIRECT_FIELD_NAME,
         login_url=login_url,
         redirect_field_name=redirect_field_name
     )
-    #if function:
-     #   return actual_decorator(function)
+    if function:
+        return actual_decorator(function)
     return actual_decorator
