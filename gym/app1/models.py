@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from PIL import Image
 from django.utils import timezone
-# Create your models here.
+# Create your models here.  hthhyhyt
 #گزینه های انتخاب کارکن: خدمه یا مربی؟
 class who_works (models.TextChoices):
     COACH = 'CO','coach'
@@ -121,7 +121,7 @@ class coaches (workers):
     sport_degree =models.TextField()
     experience = models.TextField()
     
-#مدل حرکات🔴
+    
 class movements(models.Model):
     #کلید اصلی= نام
     name = models.CharField(primary_key=True,max_length=10)
@@ -146,8 +146,15 @@ class Agreement(models.Model):
 #مدل برنامه(ورزشی)🔴
 class program(models.Model):
     finish_date = models.DateField(null=True)
-   # tuition =
-  #  howmany_days =
+    tuition =model.floatfield
+class MyModel(model.Model):
+ DAYS_CHOICES=[
+     ('دو روز','دو')
+     ('سه روز','سه')
+     ('چهار روز','چهار')
+     ]
+     days=models.charfild(max_lengh=2,choices=DAYS_CHOICES)
+     
 
 #مدل عضویت🔴
 class Membership(models.Model):
