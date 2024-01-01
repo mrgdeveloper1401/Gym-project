@@ -138,16 +138,20 @@ class movements(models.Model):
 #مدل های مجموعه ارتباط هایی که به شکل مجموعه موجودیت در آمده اند
 #مدل قرارداد🔴
 class Agreement(models.Model):
-    pass
-    #id = خودکار
-   # hours = 
-   # salary =
+    start_date=models.DateField()
+    end_date=models.DateField()
+    Hour=models.Time.Field()
+    salary=mode.DecimalField(max_digits=5,decimal_place=2)
+    class Gym=
+    model.Foreignkey(class Gym,on-delet=models.CASCADE)
+    class workers=
+    model.Foreignkey(class workers,on-delet=models.CASCADE)
 
-#مدل برنامه(ورزشی)🔴
+#مدل برنامه(ورزشی
 class program(models.Model):
     finish_date = models.DateField(null=True)
     tuition =model.floatfield
-class MyModel(model.Model):
+class Day(model.Model):
  DAYS_CHOICES=[
      ('دو روز','دو')
      ('سه روز','سه')
