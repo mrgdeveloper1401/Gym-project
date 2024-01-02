@@ -134,7 +134,6 @@ class movements(models.Model):
     '''
 
 
-
 #مدلهای مجموعه ارتباط ایی که به شکل مجموعه موجودیت در اومدن
 #مدل قرارداد
 class Agreement(models.Model):
@@ -178,4 +177,3 @@ class Membership(models.Model):
 #رزرو🔵
 class Reserve():
     pass
-'''
