@@ -2,39 +2,41 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from PIL import Image
 from django.utils import timezone
-# Create your models here.  hthhyhyt
-#گزینه های انتخاب کارکن: خدمه یا مربی؟
-class who_works (models.TextChoices):
-    COACH = 'CO','coach'
-    CREW = 'CR','crew'
-#گزینه های انتخاب روز هفته
-class weekdays(models.TextChoices):
-    SHANBE = 'SHA','Sanbe'
-    YEKSHANBE = '1SH','1shanbe'
-    DOSHANBE = '2SH','2shanbe'
-    SESHANBE = '3SH','3shanbe'
-    CHARSHANBE = '4SH','4shanbe'
-    PANJSHANBE = '5SH','5shanbe'
-    JOMEE = 'JOM','Jomee'
+# Create your models here.  
 
-#گزینه های انتخاب زمان آسیب دیدن 
+#گزینه های انتخاب کارکن: خدمه یا مربی؟✅
+class who_works (models.TextChoices):
+    COACH = 'CO','مربی'
+    CREW = 'CR','خدمه'
+#گزینه های انتخاب روز هفته✅
+class weekdays(models.TextChoices):
+    SHANBE = 'SHA','شنبه'
+    YEKSHANBE = '1SH','یکشنبه'
+    DOSHANBE = '2SH','دوشنبه'
+    SESHANBE = '3SH','سه شنبه'
+    CHARSHANBE = '4SH','چهارشنبه'
+    PANJSHANBE = '5SH','پنجشنبه'
+    JOMEE = 'JOM','جمعه'
+
+#گزینه های انتخاب زمان آسیب دیدن ✅
 class damagedwhen (models.TextChoices):
     RECENT_MONTHS = 'RM',' ماه های اخیر'
     EARLIER = 'E', 'قبلتر'
 
-# گزینه های انتخاب جنسیت
+# گزینه های انتخاب جنسیت✅
 class Gender(models.TextChoices):
     FEMALE = 'FM','Female'
     MALE = 'ML','Male'
 
 #ساخت یوزرهای سفارشی  
 class custom_user(AbstractUser):
-    email = models.EmailField(unique=True)
     is_gymManager = models.BooleanField(default=False)
     is_coach = models.BooleanField(default=False)
     is_crew = models.BooleanField(default=False)
     is_bodybuilder = models.BooleanField(default=False)
-    user_name = models.CharField(max_length=10,null=True)
+    user_name = models.CharField(max_length=10)
+    email = models.EmailField(unique=True)
+    phonenumber = models.PositiveSmallIntegerField(max_length = 11)
     
 '''class Crew_CustomUser():
     pass
@@ -53,20 +55,24 @@ class damage(models.Model):
 
 #مدل های مجموعه موجودیت ها
 #مدل باشگاه(مدیرباشگاه)🔵
-class Gym(models.Model):
-    gymManager =models.OneToOneField(custom_user,on_delete=models.PROTECT, primary_key=True)
+class Gym(custom_user):
+    #تابع برای پیدا کردن زمان کاری یک باشگاه
+    def find_gym_workingtime(thegym):
+        #از قرارداد های این باشگاه که با مربی ها بسته شده، ورک تایم های مربوطه را فراخوانی کن 
+        workingtime = Agreement.objects.filter(gym = thegym,coach_crew = "CO").values('work_times')
+        return workingtime
     
-    gym_name = models.CharField(unique=True,max_length=20)
-   # workingtime=
+    #نام مدیر باشگاه، ایمیل، شماره تلفن از مدل یوزرسفارشی ارث بری میشوند  
     manager_cv = models.TextField()
+    gym_name = models.CharField(unique=True,max_length=20)
+    foundationdate = models.DateField()
     facilities = models.TextField()
     capacity = models.PositiveSmallIntegerField()
     numberofmachines = models.IntegerField()
    # numberofworkers=
-    foundationdate = models.DateField()
+    #workingtime= 
    # address=null = true
     #tuition =
-    #phonenumber
 
     def __str__(self):
         return self.gym_name
@@ -104,9 +110,11 @@ class work_time(models.Model):
 
     def __str__(self):
         return str(self.day,self.start,self.end)
-'''                                                                                                                      
+                                                                                                                      
 #مدل کارکنان🔵
-class workers (models.Model):
+class worker (models.Model):
+    is_coach =models.BooleanField(default = False)
+    is_crew = models.BooleanField(default = True)
     nationalcode = models.PositiveSmallIntegerField(primary_key=True)
     firstname = models.CharField(max_length=10)
     lastname = models.CharField(max_length=10)
@@ -117,11 +125,17 @@ class workers (models.Model):
         return self.firstname
     
 #مدل مربیان🔵
-class coaches (workers):
+class coach (worker):
+    is_coach = True
+    is_crew = False
     sport_degree =models.TextField()
     experience = models.TextField()
     
-    
+#مدل خدمه🔵
+class crew (worker):
+    is_coach = False
+    is_crew = True
+    '''
 class movements(models.Model):
     #کلید اصلی= نام
     name = models.CharField(primary_key=True,max_length=10)
@@ -134,24 +148,19 @@ class movements(models.Model):
     '''
 
 
-#مدلهای مجموعه ارتباط ایی که به شکل مجموعه موجودیت در اومدن🔴✅
+#مدلهای مجموعه ارتباط ایی که به شکل مجموعه موجودیت در اومدن
 #مدل قرارداد
 class Agreement(models.Model):
     Tittle= models.CharField(max_length=250)
     start_date=models.DateField()
     end_date=models.DateField()
-    Hour=models.Time.Field()
+    Hour=models.TimeField()
     salary=models.DecimalField(max_digits=5,decimal_place=2)
-    Gym=models.ForeignKey(Gym, on_delet=models.CASCADE)
-    work_time=models.ForeignKey(work_time ,on_delet=models.CASCADE  )
+    class Gym=models.Foreignkey(class Gym)
+    class workers=models.Foreignkey(class workers,on-delet=models.CASCADE)
+    class work_time=models.Foreignkey(class work_time,on-delet=models.CASCADE) 
     
-    def __str__(self):
-        return self.Tittle
-     
-    #workers=models.ForeignKey(workers,on_delet=models.CASCADE)بعد از ساخته شدن Workerفعال شود
-    
-
-#مدل برنامه(ورزشی)🔴✅
+#مدل برنامه(ورزشی
 class program(models.Model):
     finish_date = models.DateField(null=True)
     tuition =models.floatfield
@@ -162,23 +171,25 @@ class Day(models.Model):
      ('چهار روز','چهار')
      ]
  days=models.charfild(max_lengh=2,choices=DAYS_CHOICES)
- 
- 
-  #مدل رزرو کردن  🔴 
+     
 class Reservation (models.Models):
-    custom_user = models.ForeignKey(custom_user,on_delet=models.CASCADE)
+    class custom_user = models.ForeignKey(class custom_user,on-delet=models.CASCADE)
     START_date = models.DateField()
     End_date = models.DateField()
     Reservatio_type = models.CharField(max_length=100)
     Payment_status = models.BooleanField()
     
+    def __str__(self):
+        return
+    f"{self.custom_user.user_name}
+    Reservation"
     
-    
-    #مدل عضویت🔴
+
+#مدل عضویت🔴
 class Membership(models.Model):
-    Gym = models.Foreignkey( Gym)
-    bodybuilder = models.Foreignkey( bodybuilder)
-    Reservation = models.Foreignkey( Reservation)
+    class Gym = models.Foreignkey(class Gym)
+    class bodybuilder = models.Foreignkey(class bodybuilder)
+    class Reservation = models.Foreignkey(class Reservation)
     
 
 # ارتباطاتی که با کلید خارجی و نه به صورت مدل جداگانه پیاده سازی میشوند
