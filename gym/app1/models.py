@@ -141,9 +141,10 @@ class Agreement(models.Model):
     end_date=models.DateField()
     Hour=models.Time.Field()
     salary=models.DecimalField(max_digits=5,decimal_place=2)
-    class Gym=models.Foreignkey(class Gym,on-delet=models.CASCADE)
+    class Gym=models.Foreignkey(class Gym)
     class workers=models.Foreignkey(class workers,on-delet=models.CASCADE)
-
+    class work_time=models.Foreignkey(class work_time,on-delet=models.CASCADE) 
+    
 #مدل برنامه(ورزشی
 class program(models.Model):
     finish_date = models.DateField(null=True)
@@ -156,10 +157,25 @@ class Day(models.Model):
      ]
  days=models.charfild(max_lengh=2,choices=DAYS_CHOICES)
      
+class Reservation (models.Models):
+    class custom_user = models.ForeignKey(class custom_user,on-delet=models.CASCADE)
+    START_date = models.DateField()
+    End_date = models.DateField()
+    Reservatio_type = models.CharField(max_length=100)
+    Payment_status = models.BooleanField()
+    
+    def __str__(self):
+        return
+    f"{self.custom_user.user_name}
+    Reservation"
+    
 
 #مدل عضویت🔴
 class Membership(models.Model):
-    pass
+    class Gym = models.Foreignkey(class Gym)
+    class bodybuilder = models.Foreignkey(class bodybuilder)
+    class Reservation = models.Foreignkey(class Reservation)
+    
 
 # ارتباطاتی که با کلید خارجی و نه به صورت مدل جداگانه پیاده سازی میشوند
 #عضویت در کدام باشگاه؟🔴
