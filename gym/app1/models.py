@@ -40,7 +40,7 @@ class custom_user(AbstractUser):
     pass
 class Coach_CustomUser():
     pass'''
-#مدل آسیب ها✅
+#مدل آسیب ها✅  
 class damage(models.Model):
 
     body_part= models.CharField(max_length=20)
@@ -134,18 +134,24 @@ class movements(models.Model):
     '''
 
 
-#مدلهای مجموعه ارتباط ایی که به شکل مجموعه موجودیت در اومدن
+#مدلهای مجموعه ارتباط ایی که به شکل مجموعه موجودیت در اومدن🔴✅
 #مدل قرارداد
 class Agreement(models.Model):
+    Tittle= models.CharField(max_length=250)
     start_date=models.DateField()
     end_date=models.DateField()
     Hour=models.Time.Field()
     salary=models.DecimalField(max_digits=5,decimal_place=2)
-    class Gym=models.Foreignkey(class Gym)
-    class workers=models.Foreignkey(class workers,on-delet=models.CASCADE)
-    class work_time=models.Foreignkey(class work_time,on-delet=models.CASCADE) 
+    Gym=models.ForeignKey(Gym, on_delet=models.CASCADE)
+    work_time=models.ForeignKey(work_time ,on_delet=models.CASCADE  )
     
-#مدل برنامه(ورزشی
+    def __str__(self):
+        return self.Tittle
+     
+    #workers=models.ForeignKey(workers,on_delet=models.CASCADE)بعد از ساخته شدن Workerفعال شود
+    
+
+#مدل برنامه(ورزشی)🔴✅
 class program(models.Model):
     finish_date = models.DateField(null=True)
     tuition =models.floatfield
@@ -156,25 +162,23 @@ class Day(models.Model):
      ('چهار روز','چهار')
      ]
  days=models.charfild(max_lengh=2,choices=DAYS_CHOICES)
-     
+ 
+ 
+  #مدل رزرو کردن  🔴 
 class Reservation (models.Models):
-    class custom_user = models.ForeignKey(class custom_user,on-delet=models.CASCADE)
+    custom_user = models.ForeignKey(custom_user,on_delet=models.CASCADE)
     START_date = models.DateField()
     End_date = models.DateField()
     Reservatio_type = models.CharField(max_length=100)
     Payment_status = models.BooleanField()
     
-    def __str__(self):
-        return
-    f"{self.custom_user.user_name}
-    Reservation"
     
-
-#مدل عضویت🔴
+    
+    #مدل عضویت🔴
 class Membership(models.Model):
-    class Gym = models.Foreignkey(class Gym)
-    class bodybuilder = models.Foreignkey(class bodybuilder)
-    class Reservation = models.Foreignkey(class Reservation)
+    Gym = models.Foreignkey( Gym)
+    bodybuilder = models.Foreignkey( bodybuilder)
+    Reservation = models.Foreignkey( Reservation)
     
 
 # ارتباطاتی که با کلید خارجی و نه به صورت مدل جداگانه پیاده سازی میشوند
@@ -193,3 +197,16 @@ class Membership(models.Model):
 #رزرو🔵
 class Reserve():
     pass
+
+
+
+
+
+  
+
+
+
+
+
+
+
