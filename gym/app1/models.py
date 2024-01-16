@@ -1,7 +1,9 @@
+from collections.abc import Iterable
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from PIL import Image
 from django.utils import timezone
+from datetime import date
 # Create your models here.  
 
 #گزینه های انتخاب کارکن: خدمه یا مربی؟✅
@@ -35,9 +37,10 @@ class custom_user(AbstractUser):
     is_crew = models.BooleanField(default=False)
     is_bodybuilder = models.BooleanField(default=False)
     user_name = models.CharField(max_length=10)
-    email = models.EmailField(unique=True)
-    phonenumber = models.PositiveSmallIntegerField(max_length = 11)
-    
+    email = models.EmailField(primary_key=True)
+    phonenumber = models.PositiveSmallIntegerField()
+    gender = models.CharField (max_length= 2, choices=Gender.choices , default=Gender.FEMALE)
+
 '''class Crew_CustomUser():
     pass
 class Coach_CustomUser():
@@ -57,10 +60,10 @@ class damage(models.Model):
 #مدل باشگاه(مدیرباشگاه)🔵
 class Gym(custom_user):
     #تابع برای پیدا کردن زمان کاری یک باشگاه
-    def find_gym_workingtime(thegym):
+    '''def find_gym_workingtime(thegym):
         #از قرارداد های این باشگاه که با مربی ها بسته شده، ورک تایم های مربوطه را فراخوانی کن 
         workingtime = Agreement.objects.filter(gym = thegym,coach_crew = "CO").values('work_times')
-        return workingtime
+        return workingtime'''
     
     #نام مدیر باشگاه، ایمیل، شماره تلفن از مدل یوزرسفارشی ارث بری میشوند  
     manager_cv = models.TextField()
@@ -78,27 +81,30 @@ class Gym(custom_user):
         return self.gym_name
 
 #مدل ورزشکاران🔵
-class bodybuilder (models.Model):
-    bodybuilder = models.OneToOneField(custom_user,on_delete=models.PROTECT,primary_key=True)
-    
-    firstname = models.CharField(max_length=15)
-    lastname = models.CharField(max_length=15)
-    gender = models.CharField (max_length= 2, choices=Gender.choices , default=Gender.FEMALE)
+class bodybuilder (custom_user):
+    is_bodybuilder = models.BooleanField(True)
     height = models.PositiveSmallIntegerField()
     weight = models.PositiveSmallIntegerField()
-    nationalcode = models.PositiveSmallIntegerField(unique=True)
-    email = models.EmailField()
-    phonenumber = models.PositiveSmallIntegerField()
     aim = models.TextField()
-    illness = models.TextField()
-    birthdate = models.DateField()
-   # age = 
+    illness = models.TextField(null = True)
+    birthdate = models.DateField(null=True)
+    age = models.IntegerField(null = True,blank = True)
     Damage = models.ManyToManyField(damage,related_name="who_damaged",null=True)
-
-    def __str__(self) -> str:
-        return self.firstname
-
     
+    #تابع برای ذخیره سازی خودکار سن
+    def save(self,*args,**kwargs):
+        today = date.today()
+        birthdate = self.birthdate
+        self.age = today.year - birthdate.year - ((today.month,today.day)<(birthdate.month,birthdate.day))
+        return super().save(*args,**kwargs)
+    
+    def __str__(self) -> str:
+        return self.user_name
+'''from app1.models import bodybuilder,custom_user
+from datetime import date
+ali = bodybuilder(user_name='ali',email = 'a@gmail.come',phonenumber = 1234,height = 120,weight =51,aim=' ',birthdate = date(2002,1,1))
+ali.save()
+     '''
 #مدل ورکتایمز✅
 class work_time(models.Model):
 
@@ -149,8 +155,8 @@ class movements(models.Model):
 
 
 #مدلهای مجموعه ارتباط ایی که به شکل مجموعه موجودیت در اومدن
-#مدل قرارداد
-class Agreement(models.Model):
+#مدل قرارداد🔴
+'''class Agreement(models.Model):
     Tittle= models.CharField(max_length=250)
     start_date=models.DateField()
     end_date=models.DateField()
@@ -158,9 +164,9 @@ class Agreement(models.Model):
     salary=models.DecimalField(max_digits=5,decimal_place=2)
     class Gym=models.Foreignkey(class Gym)
     class workers=models.Foreignkey(class workers,on-delet=models.CASCADE)
-    class work_time=models.Foreignkey(class work_time,on-delet=models.CASCADE) 
+    class work_time=models.Foreignkey(class work_time,on-delet=models.CASCADE)
     
-#مدل برنامه(ورزشی
+#مدل برنامه(ورزشی)🔴
 class program(models.Model):
     finish_date = models.DateField(null=True)
     tuition =models.floatfield
@@ -189,7 +195,7 @@ class Reservation (models.Models):
 class Membership(models.Model):
     class Gym = models.Foreignkey(class Gym)
     class bodybuilder = models.Foreignkey(class bodybuilder)
-    class Reservation = models.Foreignkey(class Reservation)
+    class Reservation = models.Foreignkey(class Reservation)'''
     
 
 # ارتباطاتی که با کلید خارجی و نه به صورت مدل جداگانه پیاده سازی میشوند
