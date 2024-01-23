@@ -132,9 +132,18 @@ class work_timeform(forms.ModelForm):
         model = work_time
         fields = ('day','coach_crew','start')
     
-    def save(self, commit=True) -> Any:
+    def save(self, commit=True):
         return super().save(commit)
     
 #فرم برای افزودن حرکت بدنسازی
 class movementform(forms.ModelForm):
-    pass
+    name = forms.CharField(max_length=25,widget=forms.TextInput())
+    machine_name = forms.CharField(max_length=15,widget=forms.TextInput())
+    body_part = forms.CharField(widget=forms.Textarea())
+    image = forms.ImageField(widget=forms.ImageField())
+
+    class Meta:
+        model = movements
+
+    def save(self, commit:True):
+        return super().save(commit)

@@ -123,7 +123,7 @@ class work_time(models.Model):
 
     #ذخیره خودکار مدت زمان
     def save(self):
-        if self.start and self.end:
+        if self.start and self.end  and self.start < self.end:
             self.durationtime = self.end -self.start
         else:
             self.durationtime = None
@@ -156,17 +156,17 @@ class coach (worker):
 class crew (worker):
     is_coach = False
     is_crew = True
-    '''
+
+#مدل حرکات ورزشی✅
 class movements(models.Model):
-    #کلید اصلی= نام
-    name = models.CharField(primary_key=True,max_length=10)
-    machine_name = models.CharField(max_length=10)
-   # body_part =
-    image = models.ImageField()
+    name = models.CharField(primary_key=True,max_length=25)
+    machine_name = models.CharField(max_length=15)
+    body_part = models.TextField()
+    image = models.ImageField(null=True)
 
     def __str__(self) -> str:
         return self.name
-    '''
+    
 
 
 #مدلهای مجموعه ارتباط هایی که به شکل مجموعه موجودیت در آمده اند
