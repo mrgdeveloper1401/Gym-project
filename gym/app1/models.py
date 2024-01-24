@@ -31,6 +31,13 @@ class damagedwhen (models.TextChoices):
 class Gender(models.TextChoices):
     FEMALE = 'FM','Female'
     MALE = 'ML','Male'
+#گزینه های انتخاب تعداد روز برنامه ورزشی
+class program_days(models.TextChoices):
+    one = 'one','یک جلسه ای'
+    two = 'two', 'دو جلسه ای'
+    three = 'three', 'سه جلسه ای'
+    four = 'four', 'چهار جلسه ای'
+
 #گزینه های انتخاب استان✅
 class province(models.TextChoices):
     ardebil = 'ardebil','اردبیل'
@@ -202,10 +209,10 @@ class Agreement(models.Model):
     salary=models.DecimalField(max_digits=5,decimal_place=2)
 
     #شرکت کنندگان در قرارداد
-    gym = models.ForeignKey(Gym,on_delete =models.PROTECT,related_name = 'agreements' )
+    gym = models.ForeignKey(Gym,on_delete =models.CASCADE,related_name = 'agreements' )
     coach_crew = models.CharField(max_length = 2, choices = who_works.choices)
-    coach = models.ForeignKey(coach,on_delete=models.PROTECT,related_name = 'agreements',null = True)
-    crew = models.ForeignKey(crew,on_delete= models.PROTECT,related_name = 'agreements',null = True )
+    coach = models.ForeignKey(coach,on_delete=models.CASCADE,related_name = 'agreements',null = True)
+    crew = models.ForeignKey(crew,on_delete= models.CASCADE,related_name = 'agreements',null = True )
     work_times = models.ManyToManyField(work_time,on_delete=models.PROTECT,related_name='agreements')
 
     #محاسبه ساعات کار
@@ -216,17 +223,16 @@ class Agreement(models.Model):
         pass
 
 #مدل برنامه(ورزشی)🔴
-'''class program(models.Model):
-    finish_date = models.DateField(null=True)
-    tuition =models.floatfield
-class Day(models.Model):
- DAYS_CHOICES=[
-     ('دو روز','دو')
-     ('سه روز','سه')
-     ('چهار روز','چهار')
-     ]
- days=models.charfild(max_lengh=2,choices=DAYS_CHOICES)
-     
+class program(models.Model):
+    start_date = models.DateField()
+    end_date = models.DateField()
+    howmany_days = models.CharField(max_length=3,choices = program_days.choices)
+    tuition = models.DecimalField(max_digits=5,decimal_place=2)
+    #presence_absence
+    coach = models.ForeignKey(coach,on_delete= models.SET_NULL,related_name = "programs")
+    bodybuilder = models.ManyToManyField(bodybuilder,on_delete=models.DO_NOTHING,related_name="programs")
+    movements = models.ManyToManyField(movements,on_delete=models.PROTECT, related_name='programs')
+'''
 class Reservation (models.Models):
     class custom_user = models.ForeignKey(class custom_user,on-delet=models.CASCADE)
     START_date = models.DateField()
@@ -239,35 +245,24 @@ class Reservation (models.Models):
     f"{self.custom_user.user_name}
     Reservation"
     
-
+'''
 #مدل عضویت🔴
 class Membership(models.Model):
-    class Gym = models.Foreignkey(class Gym)
-    class bodybuilder = models.Foreignkey(class bodybuilder)
-    class Reservation = models.Foreignkey(class Reservation)'''
+    pass
     
 
 # ارتباطاتی که با کلید خارجی و نه به صورت مدل جداگانه پیاده سازی میشوند
 #عضویت در کدام باشگاه؟🔴
 #کدام ورزشکاران عضو باشگاه اند؟🔴
 #ورزشکار-برنامه 🔴
-#برنامه نویسی(مربی -برنامه)🔴
-#حرکات-برنامه(لیست)🔴
-#آسیب - ورزشکار🔵
-#قرارداد-باشگاه🔵
-#قرارداد_ورک تایم🔵
-#قرارداد -کارکنان🔵
+
 
 
 #مدل های مجموعه ارتباط هایی که صفت دارند(مدل های میانی/واسطه)
 #رزرو🔵
-class Reserve():
-    pass
-
-
-
-
-
+class Reserve(models.Model):
+    member = models.ManyToManyField(Membership,on_delete = models.CASCADE,related_name='reservations')
+    work_time = models.ManyToManyField(work_time,on_delete=models.CASCADE,related_name= 'reservations')
   
 
 
