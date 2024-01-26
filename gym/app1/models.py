@@ -1,5 +1,5 @@
 from collections.abc import Iterable
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser,AbstractBaseUser,UserManager,BaseUserManager
 from django.db import models
 from PIL import Image
 from django.utils import timezone
@@ -36,7 +36,6 @@ class program_days(models.TextChoices):
     two = 'two', 'دو جلسه ای'
     three = 'three', 'سه جلسه ای'
     four = 'four', 'چهار جلسه ای'
-
 #گزینه های انتخاب استان✅
 class province(models.TextChoices):
     ardebil = 'ardebil','اردبیل'
@@ -70,6 +69,7 @@ class province(models.TextChoices):
     hormozgan = 'hormozgan', 'هرمزگان'
     hamadan = 'hamadan', 'همدان'
     yazd = 'yazd', 'یزد'
+
 
 #مدل حرکات ورزشی🔵✅
 class movements(models.Model):
@@ -112,14 +112,16 @@ class damage(models.Model):
 
 #ساخت یوزرهای سفارشی🔵✅ 
 class custom_user(AbstractUser):
+    objects = UserManager()
+    email = models.EmailField(primary_key=True)
     is_gymManager = models.BooleanField(default=False)
     is_coach = models.BooleanField(default=False)
     is_crew = models.BooleanField(default=False)
     is_bodybuilder = models.BooleanField(default=False)
-    user_name = models.CharField(max_length=10)
-    email = models.EmailField(primary_key=True)
-    phonenumber = models.IntegerField()
-    gender = models.CharField (max_length= 2, choices=Gender.choices , default=Gender.FEMALE)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+#sqlite3 your_database_name.db
+#.schema app1_custom_user
 
 
 #مدل های مجموعه موجودیت ها
@@ -128,6 +130,9 @@ class custom_user(AbstractUser):
 class Gym(models.Model):
     user = models.OneToOneField(custom_user, on_delete=models.PROTECT,primary_key = True, related_name = 'gym')
     #نام مدیر باشگاه، ایمیل، شماره تلفن، جنسیت --> مدل یوزرسفارشی   
+    gender = models.CharField (max_length= 2, choices=Gender.choices , default=Gender.FEMALE)
+    phonenumber = models.IntegerField(null=True,blank = True)
+
     manager_cv = models.TextField(blank=True, null = True)
     gym_name = models.CharField(unique=True,max_length=20)
     foundationdate = models.DateField()
@@ -143,7 +148,7 @@ class Gym(models.Model):
     building = models.CharField(max_length = 15)
     address =models.JSONField(default= dict,blank= True)
     #tuition fields
-    program_price = models.DecimalField(max_digits= 10, decimal_place= 2)
+    program_price = models.DecimalField(max_digits= 10, decimal_places= 2)
     tuition_8_sessions = models.DecimalField(max_digits=10, decimal_places=2)
     tuition_12_sessions = models.DecimalField(max_digits=10, decimal_places=2)
     tuition_16_sessions = models.DecimalField(max_digits=10, decimal_places=2)
@@ -188,14 +193,17 @@ class Gym(models.Model):
 #مدل ورزشکاران🔵✅
 class bodybuilder (models.Model):
     user = models.OneToOneField(custom_user, on_delete = models.PROTECT, primary_key = True, related_name = 'bodybuilder')
-    #نام ورزشکار، ایمیل، شماره تلفن، جنسیت --> مدل یوزرسفارشی       
+    #نام ورزشکار، ایمیل، شماره تلفن، جنسیت --> مدل یوزرسفارشی    
+    gender = models.CharField (max_length= 2, choices=Gender.choices , default=Gender.FEMALE)
+    phonenumber = models.IntegerField(null=True,blank = True)
+
     height = models.PositiveSmallIntegerField()
     weight = models.PositiveSmallIntegerField()
     aim = models.TextField()
     illness = models.TextField(null = True,blank=True)
     birthdate = models.DateField(null=True)
     age = models.IntegerField(null = True,blank = True)
-    Damage = models.ManyToManyField(damage,related_name="who_damaged",null=True,blank=True)
+    Damage = models.ManyToManyField(damage,related_name="who_damaged",blank=True)
     
     #تابع برای ذخیره سازی خودکار سن
     def save(self):
@@ -203,12 +211,10 @@ class bodybuilder (models.Model):
         birthdate = self.birthdate
         self.age = today.year - birthdate.year - ((today.month,today.day)<(birthdate.month,birthdate.day))
         return super().save()
-    
-    def __str__(self) -> str:
-        return self.user.user_name
+
 '''from app1.models import bodybuilder,custom_user
 from datetime import date
-ali = bodybuilder(user_name='ali',email = 'a@gmail.come',phonenumber = 1234,height = 120,weight =51,aim=' ',birthdate = date(2002,1,1))
+ali = bodybuilder(username='ali',email = 'a@gmail.come',phonenumber = 1234,height = 120,weight =51,aim=' ',birthdate = date(2002,1,1))
 ali.save()
      '''
 
@@ -216,13 +222,18 @@ ali.save()
 #مدل مربیان🔵✅
 class coach (models.Model):
     user = models.OneToOneField(custom_user, on_delete = models.PROTECT,primary_key = True, related_name = 'coach')
-    #نام مربی، ایمیل، شماره تلفن، جنسیت --> مدل یوزرسفارشی       
+    #نام مربی، ایمیل، شماره تلفن، جنسیت --> مدل یوزرسفارشی      
+    gender = models.CharField (max_length= 2, choices=Gender.choices , default=Gender.FEMALE)
+    phonenumber = models.IntegerField(null=True,blank = True)
+
     sport_degree =models.TextField()
-    experience = models.TextField(blank =True,null =True)
-    
+    experience = models.TextField(blank =True,null =True)  
 #مدل خدمه🔵✅
 class crew (models.Model):
+    
     user = models.OneToOneField(custom_user, on_delete = models.PROTECT, primary_key = True, related_name = 'crew')
+    gender = models.CharField (max_length= 2, choices=Gender.choices , default=Gender.FEMALE)
+    phonenumber = models.IntegerField(null=True,blank = True)
 
 
 #مدلهای مجموعه ارتباط هایی که به شکل مجموعه موجودیت در آمده اند
@@ -231,14 +242,14 @@ class Agreement(models.Model):
     start_date=models.DateField()
     end_date=models.DateField()
     Hours=models.DurationField(blank=True,default = 0)
-    salary=models.DecimalField(max_digits=5,decimal_place=2)
+    salary=models.DecimalField(max_digits=5,decimal_places=2)
 
     #شرکت کنندگان در قرارداد
     gym = models.ForeignKey(Gym,on_delete =models.CASCADE,related_name = 'agreements' )
     coach_crew = models.CharField(max_length = 2, choices = who_works.choices)
     coach = models.ForeignKey(coach,on_delete=models.CASCADE,related_name = 'agreements',null = True)
     crew = models.ForeignKey(crew,on_delete= models.CASCADE,related_name = 'agreements',null = True )
-    work_times = models.ManyToManyField(work_time,on_delete=models.PROTECT,related_name='agreements')
+    work_times = models.ManyToManyField(work_time,related_name='agreements')
 
     #محاسبه ساعات کار🟥
     def save(self,*args, **kwargs):
@@ -250,11 +261,11 @@ class Agreement(models.Model):
 class program(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
-    howmany_days = models.CharField(max_length=3,choices = program_days.choices)
-    tuition = models.DecimalField(max_digits=10,decimal_place=2)
-    coach = models.ForeignKey(coach,on_delete= models.SET_NULL,related_name = "programs")
-    bodybuilder = models.ManyToManyField(bodybuilder,on_delete=models.DO_NOTHING,related_name="programs")
-    movements = models.ManyToManyField(movements,on_delete=models.PROTECT, related_name='programs')
+    howmany_days = models.CharField(max_length=6,choices = program_days.choices)
+    tuition = models.DecimalField(max_digits=10,decimal_places=2)
+    coach = models.ForeignKey(coach,on_delete= models.DO_NOTHING,related_name = "programs")
+    bodybuilder = models.ManyToManyField(bodybuilder,related_name="programs")
+    movements = models.ManyToManyField(movements, related_name='programs')
 '''
 class Reservation (models.Models):
     class custom_user = models.ForeignKey(class custom_user,on-delet=models.CASCADE)
@@ -265,25 +276,20 @@ class Reservation (models.Models):
     
     def __str__(self):
         return
-    f"{self.custom_user.user_name}
+    f"{self.custom_user.username}
     Reservation"
     
 '''
-#مدل عضویت🔴
+#مدل عضویت🔵✅
 class Membership(models.Model):
     gym = models.ForeignKey(Gym,on_delete=models.CASCADE, related_name = 'memberships')
     bodybuilder = models.ForeignKey(bodybuilder, on_delete = models.CASCADE, related_name= 'memberships')
-    #Reserve = models.
-
-# ارتباطاتی که با کلید خارجی و نه به صورت مدل جداگانه پیاده سازی میشوند
 
 
-
-#مدل های مجموعه ارتباط هایی که صفت دارند(مدل های میانی/واسطه)
-#رزرو🔵
+#رزرو🔵✅
 class Reserve(models.Model):
-    member = models.ManyToManyField(Membership,on_delete = models.CASCADE,related_name='reservations')
-    work_time = models.ManyToManyField(work_time,on_delete=models.CASCADE,related_name= 'reservations')
+    member = models.ManyToManyField(Membership,related_name='reservations')
+    work_time = models.ManyToManyField(work_time,related_name= 'reservations')
   
 
 

@@ -26,7 +26,7 @@ class gymmanager_signupform(UserCreationForm):
     #phonenumber
     class Meta(UserCreationForm.Meta):
         model = custom_user
-        fields = ('user_name','email','password1','password2')
+        fields = ('username','email','password1','password2')
 
 ''' @transaction.Atomic
     def save(self,savepoint =True,durable=False, commit=True):
@@ -77,7 +77,7 @@ class bodybuilder_signupform(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = custom_user
-        fields = ('user_name','email','password1','password2')
+        fields = ('username','email','password1','password2')
 
     '''@transaction.Atomic
     def save(self, commit=True):
@@ -144,6 +144,7 @@ class movementform(forms.ModelForm):
 
     class Meta:
         model = movements
+        fields = 'name','machine_name','body_part','image'
 
     def save(self, commit:True):
         return super().save(commit)
