@@ -225,9 +225,11 @@ class coach (models.Model):
     #نام مربی، ایمیل، شماره تلفن، جنسیت --> مدل یوزرسفارشی      
     gender = models.CharField (max_length= 2, choices=Gender.choices , default=Gender.FEMALE)
     phonenumber = models.IntegerField(null=True,blank = True)
-
     sport_degree =models.TextField()
     experience = models.TextField(blank =True,null =True)  
+    def save(self):
+        self.id = self.user.get(id)
+        return super().save()
 #مدل خدمه🔵✅
 class crew (models.Model):
     
