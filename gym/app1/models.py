@@ -31,9 +31,8 @@ class damagedwhen (models.TextChoices):
 class Gender(models.TextChoices):
     FEMALE = 'FM','Female'
     MALE = 'ML','Male'
-#گزینه های انتخاب تعداد روز برنامه ورزشی
+#گزینه های انتخاب تعداد روز برنامه ورزشی✅
 class program_days(models.TextChoices):
-    one = 'one','یک جلسه ای'
     two = 'two', 'دو جلسه ای'
     three = 'three', 'سه جلسه ای'
     four = 'four', 'چهار جلسه ای'
@@ -77,7 +76,7 @@ class movements(models.Model):
     name = models.CharField(primary_key=True,max_length=25)
     machine_name = models.CharField(max_length=15)
     body_part = models.TextField()
-    image = models.ImageField(null=True)
+    image = models.ImageField(null=True,blank=True)
 
     def __str__(self) -> str:
         return self.name
@@ -87,7 +86,7 @@ class work_time(models.Model):
     day = models.CharField(choices=weekdays.choices,max_length=10)
     start = models.TimeField()
     end = models.TimeField()
-    durationtime = models.DurationField(null=True)
+    durationtime = models.DurationField(null=True,blank=True)
     coach_crew = models.CharField(max_length=2 , choices=who_works.choices)
 
     #ذخیره خودکار مدت زمان
@@ -95,7 +94,7 @@ class work_time(models.Model):
         if self.start and self.end  and self.start < self.end:
             self.durationtime = self.end -self.start
         else:
-            self.durationtime = None
+            self.durationtime = 0
         super().save()
 
     def __str__(self):
@@ -125,11 +124,11 @@ class custom_user(AbstractUser):
 
 #مدل های مجموعه موجودیت ها
     
-#مدل باشگاه(مدیرباشگاه)🔵
+#مدل باشگاه(مدیرباشگاه)🔵✅
 class Gym(models.Model):
     user = models.OneToOneField(custom_user, on_delete=models.PROTECT,primary_key = True, related_name = 'gym')
     #نام مدیر باشگاه، ایمیل، شماره تلفن، جنسیت --> مدل یوزرسفارشی   
-    manager_cv = models.TextField()
+    manager_cv = models.TextField(blank=True, null = True)
     gym_name = models.CharField(unique=True,max_length=20)
     foundationdate = models.DateField()
     facilities = models.TextField()
@@ -142,20 +141,46 @@ class Gym(models.Model):
     street= models.CharField(max_length= 20)
     valley= models.CharField(max_length=15)
     building = models.CharField(max_length = 15)
-    #tuition =
-    #workingtime
-    #تابع محاسبه و ذخیره سازی تعداد کارکنان
-    def update_num_of_workers(self):
+    address =models.JSONField(default= dict,blank= True)
+    #tuition fields
+    program_price = models.DecimalField(max_digits= 10, decimal_place= 2)
+    tuition_8_sessions = models.DecimalField(max_digits=10, decimal_places=2)
+    tuition_12_sessions = models.DecimalField(max_digits=10, decimal_places=2)
+    tuition_16_sessions = models.DecimalField(max_digits=10, decimal_places=2)
+    tuition = models.JSONField(default= dict,blank= True)
+   
+    workingtime = models.JSONField(null = True,blank=True)#🟥
+
+    #تابع محاسبه و ذخیره سازی تعداد کارکنان، آدرس ، شهریه و زمان کاری
+    def save(self,*args, **kwargs):
+
+        #تعداد کارکنان
         num_workers = Agreement.objects.filter(gym = self).count()
         self.numofworkers = num_workers
-        self.save()
 
-    #تابع برای پیدا کردن زمان کاری یک باشگاه🟥
-    def find_gym_workingtime(self):
-        #از قرارداد های این باشگاه که با مربی ها بسته شده، ورک تایم های مربوطه را فراخوانی کن 
-        workingtime = Agreement.objects.filter(gym = self,coach_crew = "CO").values('work_times')
-        return workingtime
+        #آدرس
+        self.address = {
+            'province': self.province,
+            'city': self.city,
+            'street': self.street,
+            'valley': self.valley,
+            'building': self.building
+        }
 
+        #شهریه
+        self.tuition = {
+            'program_price': self.program_price,
+            'training_price': {
+                '8_sessions': self.tuition_8_sessions,
+                '12_sessions': self.tuition_12_sessions,
+                '16_sessions': self.tuition_16_sessions
+            }
+        }
+
+        #زمان کاری🟥
+        self.workingtime = Agreement.objects.filter(gym = self,coach_crew = "CO").values('work_times')
+
+        super().save(*args,**kwargs)
 
     def __str__(self):
         return self.gym_name
@@ -167,10 +192,10 @@ class bodybuilder (models.Model):
     height = models.PositiveSmallIntegerField()
     weight = models.PositiveSmallIntegerField()
     aim = models.TextField()
-    illness = models.TextField(null = True)
+    illness = models.TextField(null = True,blank=True)
     birthdate = models.DateField(null=True)
     age = models.IntegerField(null = True,blank = True)
-    Damage = models.ManyToManyField(damage,related_name="who_damaged",null=True)
+    Damage = models.ManyToManyField(damage,related_name="who_damaged",null=True,blank=True)
     
     #تابع برای ذخیره سازی خودکار سن
     def save(self):
@@ -193,7 +218,7 @@ class coach (models.Model):
     user = models.OneToOneField(custom_user, on_delete = models.PROTECT,primary_key = True, related_name = 'coach')
     #نام مربی، ایمیل، شماره تلفن، جنسیت --> مدل یوزرسفارشی       
     sport_degree =models.TextField()
-    experience = models.TextField()
+    experience = models.TextField(blank =True,null =True)
     
 #مدل خدمه🔵✅
 class crew (models.Model):
@@ -201,11 +226,11 @@ class crew (models.Model):
 
 
 #مدلهای مجموعه ارتباط هایی که به شکل مجموعه موجودیت در آمده اند
-#مدل قرارداد🔴
+#مدل قرارداد🔵✅
 class Agreement(models.Model):
     start_date=models.DateField()
     end_date=models.DateField()
-    Hours=models.TimeField()
+    Hours=models.DurationField(blank=True,default = 0)
     salary=models.DecimalField(max_digits=5,decimal_place=2)
 
     #شرکت کنندگان در قرارداد
@@ -215,20 +240,18 @@ class Agreement(models.Model):
     crew = models.ForeignKey(crew,on_delete= models.CASCADE,related_name = 'agreements',null = True )
     work_times = models.ManyToManyField(work_time,on_delete=models.PROTECT,related_name='agreements')
 
-    #محاسبه ساعات کار
-    def calculating_hours(self):
-        pass
-    #محاسبه دستمزد
-    def calculating_salary(self):
-        pass
+    #محاسبه ساعات کار🟥
+    def save(self,*args, **kwargs):
+        for duration in self.work_times.objects.values('duration'):
+            self.Hours += duration
+        super().save(*args,**kwargs)
 
-#مدل برنامه(ورزشی)🔴
+#مدل برنامه(ورزشی)🔵✅
 class program(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     howmany_days = models.CharField(max_length=3,choices = program_days.choices)
-    tuition = models.DecimalField(max_digits=5,decimal_place=2)
-    #presence_absence
+    tuition = models.DecimalField(max_digits=10,decimal_place=2)
     coach = models.ForeignKey(coach,on_delete= models.SET_NULL,related_name = "programs")
     bodybuilder = models.ManyToManyField(bodybuilder,on_delete=models.DO_NOTHING,related_name="programs")
     movements = models.ManyToManyField(movements,on_delete=models.PROTECT, related_name='programs')
@@ -248,13 +271,11 @@ class Reservation (models.Models):
 '''
 #مدل عضویت🔴
 class Membership(models.Model):
-    pass
-    
+    gym = models.ForeignKey(Gym,on_delete=models.CASCADE, related_name = 'memberships')
+    bodybuilder = models.ForeignKey(bodybuilder, on_delete = models.CASCADE, related_name= 'memberships')
+    #Reserve = models.
 
 # ارتباطاتی که با کلید خارجی و نه به صورت مدل جداگانه پیاده سازی میشوند
-#عضویت در کدام باشگاه؟🔴
-#کدام ورزشکاران عضو باشگاه اند؟🔴
-#ورزشکار-برنامه 🔴
 
 
 
